@@ -1,0 +1,540 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#101010">
+<title>Dashboard | EULLIYAN AI</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+:root {
+  --bg: #101010;
+  --panel: #191919;
+  --panel2: #202020;
+  --gold: #d4af37;
+  --text: #f5f5f5;
+  --muted: #999;
+  --border: #303030;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Arial, sans-serif;
+}
+
+button { font: inherit; cursor: pointer; }
+
+.layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 245px;
+  background: #151515;
+  border-right: 1px solid var(--border);
+  padding: 25px 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+.brand {
+  text-align: center;
+  padding: 10px 0 30px;
+}
+
+.rabbit {
+  font-size: 43px;
+  margin-bottom: 8px;
+}
+
+.brand h2 {
+  margin: 0;
+  letter-spacing: 2px;
+  color: var(--gold);
+}
+
+.brand p {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.nav-label {
+  color: #777;
+  font-size: 10px;
+  letter-spacing: 2px;
+  margin: 15px 10px;
+}
+
+.nav-button {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: #aaa;
+  text-align: left;
+  padding: 13px;
+  border-radius: 9px;
+  margin: 3px 0;
+  transition: .2s;
+}
+
+.nav-button:hover,
+.nav-button.active {
+  color: var(--gold);
+  background: #292419;
+}
+
+.sidebar-bottom {
+  margin-top: auto;
+}
+
+.logout {
+  width: 100%;
+  border: 1px solid #694040;
+  background: transparent;
+  color: #ff8585;
+  padding: 12px;
+  border-radius: 9px;
+}
+
+.main {
+  flex: 1;
+  min-width: 0;
+  padding: 28px;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.topbar h1 {
+  margin: 0;
+  font-size: 25px;
+}
+
+.owner {
+  color: var(--gold);
+  font-size: 13px;
+}
+
+.welcome {
+  background: linear-gradient(120deg, #29251a, #191919 70%);
+  border: 1px solid #5b4b27;
+  border-radius: 16px;
+  padding: 28px;
+  margin-bottom: 25px;
+}
+
+.welcome h2 {
+  margin: 0 0 10px;
+  font-size: 25px;
+}
+
+.welcome p {
+  color: #bbb;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.gold { color: var(--gold); }
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  padding: 20px;
+}
+
+.stat-title {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.stat-value {
+  font-size: 28px;
+  margin-top: 12px;
+  font-weight: bold;
+}
+
+.section-title {
+  font-size: 17px;
+  margin: 28px 0 15px;
+}
+
+.grid-two {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.feature {
+  min-height: 135px;
+}
+
+.feature h3 { margin: 0 0 10px; }
+
+.feature p {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.feature-icon {
+  font-size: 25px;
+  margin-bottom: 12px;
+}
+
+.status {
+  color: #6ee7a0;
+  font-size: 12px;
+}
+
+.page-section { display: none; }
+.page-section.active { display: block; }
+
+.empty {
+  color: var(--muted);
+  padding: 20px 0;
+  line-height: 1.7;
+}
+
+.mobile-menu {
+  display: none;
+  background: var(--panel2);
+  color: var(--gold);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 12px;
+}
+
+#pageMessage {
+  color: #ff8585;
+  font-size: 13px;
+}
+
+@media (max-width: 850px) {
+  .sidebar {
+    width: 205px;
+  }
+  .stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .layout { display: block; }
+
+  .sidebar {
+    display: none;
+    width: 100%;
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .sidebar.open { display: flex; }
+
+  .mobile-menu { display: block; }
+
+  .main { padding: 18px; }
+
+  .topbar h1 { font-size: 20px; }
+
+  .grid-two { grid-template-columns: 1fr; }
+
+  .welcome { padding: 20px; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="layout">
+
+  <aside class="sidebar" id="sidebar">
+
+    <div class="brand">
+      <div class="rabbit">🐇</div>
+      <h2>EULLIYAN AI</h2>
+      <p>PERSONAL BUSINESS AGENT</p>
+    </div>
+
+    <div class="nav-label">MAIN MENU</div>
+
+    <button class="nav-button active" data-page="overview">◈ Overview</button>
+    <button class="nav-button" data-page="agent">✧ AI Agent</button>
+    <button class="nav-button" data-page="clients">♙ Client Finder</button>
+    <button class="nav-button" data-page="work">▣ Client Work</button>
+    <button class="nav-button" data-page="projects">◇ Personal Projects</button>
+
+    <div class="nav-label">MANAGEMENT</div>
+
+    <button class="nav-button" data-page="activity">▤ Activity Logs</button>
+    <button class="nav-button" data-page="settings">⚙ Settings</button>
+
+    <div class="sidebar-bottom">
+      <button class="logout" id="logoutButton">↪ Logout</button>
+    </div>
+
+  </aside>
+
+  <main class="main">
+
+    <header class="topbar">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <button class="mobile-menu" id="menuButton">☰</button>
+        <h1 id="pageTitle">Overview</h1>
+      </div>
+      <div class="owner">● OWNER ACCESS</div>
+    </header>
+
+    <p id="pageMessage"></p>
+
+    <!-- OVERVIEW -->
+    <section class="page-section active" id="overview">
+
+      <div class="welcome">
+        <h2>Welcome to <span class="gold">EULLIYAN AI</span></h2>
+        <p>
+          Your personal AI business workspace.
+          Manage your clients, projects and AI tools from one place.
+        </p>
+        <p class="status" style="margin-top:15px;">
+          ● Owner session verified
+        </p>
+      </div>
+
+      <div class="stats">
+        <div class="card">
+          <div class="stat-title">Total Clients</div>
+          <div class="stat-value" id="clientCount">—</div>
+        </div>
+
+        <div class="card">
+          <div class="stat-title">Personal Projects</div>
+          <div class="stat-value" id="projectCount">—</div>
+        </div>
+
+        <div class="card">
+          <div class="stat-title">Activity Records</div>
+          <div class="stat-value" id="activityCount">—</div>
+        </div>
+
+        <div class="card">
+          <div class="stat-title">Pending Approvals</div>
+          <div class="stat-value" id="approvalCount">—</div>
+        </div>
+      </div>
+
+      <h2 class="section-title">Workspace</h2>
+
+      <div class="grid-two">
+
+        <div class="card feature">
+          <div class="feature-icon">🐇</div>
+          <h3>Personal AI Agent</h3>
+          <p>Your intelligent business assistant workspace.</p>
+        </div>
+
+        <div class="card feature">
+          <div class="feature-icon">♙</div>
+          <h3>Client Discovery</h3>
+          <p>Organize and manage potential business clients.</p>
+        </div>
+
+        <div class="card feature">
+          <div class="feature-icon">💼</div>
+          <h3>Client Work</h3>
+          <p>Keep track of your business work and tasks.</p>
+        </div>
+
+        <div class="card feature">
+          <div class="feature-icon">🔐</div>
+          <h3>Owner Control</h3>
+          <p>Manage your AI tools and review activity records.</p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- AI AGENT -->
+    <section class="page-section" id="agent">
+      <div class="card">
+        <div class="feature-icon">🐇</div>
+        <h2>Personal AI Agent</h2>
+        <p class="empty">
+          Your AI assistant workspace is ready for the next development phase.
+          AI conversation and task execution are not connected yet.
+        </p>
+        <span class="status">● Workspace created</span>
+      </div>
+    </section>
+
+    <!-- CLIENTS -->
+    <section class="page-section" id="clients">
+      <div class="card">
+        <h2>Client Finder</h2>
+        <p class="empty">
+          Potential client discovery and lead management will be connected here.
+        </p>
+      </div>
+    </section>
+
+    <!-- CLIENT WORK -->
+    <section class="page-section" id="work">
+      <div class="card">
+        <h2>Client Work</h2>
+        <p class="empty">
+          Client projects, tasks and work progress will appear here.
+        </p>
+      </div>
+    </section>
+
+    <!-- PERSONAL PROJECTS -->
+    <section class="page-section" id="projects">
+      <div class="card">
+        <h2>Personal Projects</h2>
+        <p class="empty">
+          Your personal projects and progress will be managed here.
+        </p>
+      </div>
+    </section>
+
+    <!-- ACTIVITY LOGS -->
+    <section class="page-section" id="activity">
+      <div class="card">
+        <h2>Activity Logs</h2>
+        <p class="empty">
+          Your private AI activity and action history will be displayed here.
+        </p>
+      </div>
+    </section>
+
+    <!-- SETTINGS -->
+    <section class="page-section" id="settings">
+      <div class="card">
+        <h2>Agent Settings</h2>
+        <p class="empty">
+          Owner permissions, AI tools and approval controls will be configured here.
+        </p>
+      </div>
+    </section>
+
+    <footer style="text-align:center;color:#666;font-size:11px;margin-top:40px;">
+      EULLIYAN AI © 2026 · OWNER CONTROL CENTER
+    </footer>
+
+  </main>
+</div>
+
+<script>
+const SUPABASE_URL = "তোমার বর্তমান Supabase Project URL";
+const SUPABASE_ANON_KEY = "তোমার বর্তমান Publishable Key";
+const OWNER_ID = "da203003-ec49-4675-8c6a-740f5fd3b6c5";
+
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_ANON_KEY
+);
+
+// Verify owner session
+async function verifyOwner() {
+  const { data, error } = await supabaseClient.auth.getUser();
+
+  if (error || !data.user || data.user.id !== OWNER_ID) {
+    await supabaseClient.auth.signOut();
+    window.location.replace("./login.html");
+    return false;
+  }
+
+  loadOverview();
+  return true;
+}
+
+// Load overview counts
+async function loadOverview() {
+  const tables = [
+    ["client_leads", "clientCount"],
+    ["personal_projects", "projectCount"],
+    ["activity_logs", "activityCount"],
+    ["approval_requests", "approvalCount"]
+  ];
+
+  for (const [table, elementId] of tables) {
+    const { count, error } = await supabaseClient
+      .from(table)
+      .select("*", { count: "exact", head: true });
+
+    document.getElementById(elementId).textContent =
+      error ? "—" : count;
+  }
+}
+
+// Sidebar navigation
+const navButtons = document.querySelectorAll(".nav-button");
+const sections = document.querySelectorAll(".page-section");
+
+navButtons.forEach(button => {
+  button.addEventListener("click", () => {
+    const page = button.dataset.page;
+
+    navButtons.forEach(item => item.classList.remove("active"));
+    button.classList.add("active");
+
+    sections.forEach(section => {
+      section.classList.toggle("active", section.id === page);
+    });
+
+    document.getElementById("pageTitle").textContent =
+      button.textContent.trim();
+
+    document.getElementById("sidebar").classList.remove("open");
+  });
+});
+
+// Mobile menu
+document.getElementById("menuButton").addEventListener("click", () => {
+  document.getElementById("sidebar").classList.toggle("open");
+});
+
+// Secure logout
+document.getElementById("logoutButton").addEventListener("click", async () => {
+  const button = document.getElementById("logoutButton");
+  button.disabled = true;
+  button.textContent = "Signing out...";
+
+  const { error } = await supabaseClient.auth.signOut();
+
+  if (error) {
+    document.getElementById("pageMessage").textContent = error.message;
+    button.disabled = false;
+    button.textContent = "↪ Logout";
+    return;
+  }
+
+  window.location.replace("./login.html");
+});
+
+// Start
+verifyOwner();
+</script>
+
+</body>
+</html>
