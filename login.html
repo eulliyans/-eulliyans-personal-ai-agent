@@ -53,6 +53,39 @@
         <button type="submit" id="loginButton">
           Sign In
         </button>
+        <div style="text-align:right; margin-top:12px;">
+  <button
+    type="button"
+    id="forgotPasswordButton"
+    style="background:none; border:none; color:#d4af37; cursor:pointer;"
+  >
+    Forgot Password?
+  </button>
+</div>
+
+<section id="resetSection" hidden>
+  <h2>Reset Password</h2>
+
+  <label for="newPassword">New Password</label>
+  <input
+    type="password"
+    id="newPassword"
+    placeholder="Enter new password"
+    autocomplete="new-password"
+  >
+
+  <label for="confirmPassword">Confirm Password</label>
+  <input
+    type="password"
+    id="confirmPassword"
+    placeholder="Confirm new password"
+    autocomplete="new-password"
+  >
+
+  <button type="button" id="resetPasswordButton">
+    Update Password
+  </button>
+</section>
       </form>
 
       <footer>
@@ -62,7 +95,7 @@
 
     </section>
   </main>
-
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="login.js"></script>
 </body>
 </html>
