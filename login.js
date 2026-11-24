@@ -63,7 +63,7 @@ loginForm.addEventListener("submit", async (event) => {
     }
 
     showMessage("Owner verified. Login successful!", true);
-
+window.location.replace("./dashboard.html");
   } catch (error) {
     showMessage(error.message);
   } finally {
