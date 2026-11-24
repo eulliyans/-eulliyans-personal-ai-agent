@@ -2,7 +2,7 @@
 // EULLIYAN AI — Owner Login
 // Version: 1.0.0
 
-const SUPABASE_URL = sb_publishable_2FjcIO6DkXPNInB6KUngVg_4_cAx4Z2
+const SUPABASE_URL = https://byajjrvolofvgewpwswk.supabase.co
 const SUPABASE_ANON_KEY = "YOUR_SUPABASE_PUBLISHABLE_KEY";
 
 const OWNER_ID = "da203003-ec49-4675-8c6a-740f5fd3b6c5";
