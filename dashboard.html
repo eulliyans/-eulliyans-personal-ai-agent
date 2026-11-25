@@ -901,12 +901,7 @@ clientLeadForm.addEventListener("submit", async function(event) {
 
   button.disabled = true;
   message.textContent = "Saving client...";
-console.log(
-  "Opportunity Test:",
-  document.getElementById("opportunitySource").value,
-  document.getElementById("opportunityLink").value,
-  document.getElementById("opportunityDescription").value
-);
+
   const clientData = {
     business_name: document.getElementById("businessName").value.trim(),
     website_url: document.getElementById("websiteUrl").value.trim() || null,
