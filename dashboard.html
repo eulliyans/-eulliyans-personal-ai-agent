@@ -261,6 +261,86 @@ button { font: inherit; cursor: pointer; }
 
   .welcome { padding: 20px; }
 }
+  
+/* EULLIYAN AI — Aqua Watercolor Theme */
+
+:root {
+  --bg: #071923;
+  --panel: #102936;
+  --panel2: #163746;
+
+  --gold: #52D9E8;
+  --text: #EAFBFF;
+  --muted: #A4C7D0;
+  --border: rgba(82, 217, 232, 0.20);
+
+  --aqua: #52D9E8;
+  --azure: #19BBE3;
+  --indigo: #109BDA;
+  --lagoon: #8BE9EA;
+}
+
+body {
+  background:
+    radial-gradient(ellipse at 15% 10%, rgba(16,155,218,.16), transparent 38%),
+    radial-gradient(ellipse at 85% 80%, rgba(82,217,232,.10), transparent 40%),
+    var(--bg);
+}
+
+.sidebar {
+  background: linear-gradient(180deg, #102936, #091D29);
+  border-right-color: var(--border);
+}
+
+.brand h2,
+.owner,
+.gold {
+  color: var(--aqua);
+}
+
+.nav-button:hover,
+.nav-button.active {
+  color: var(--lagoon);
+  background: rgba(25,187,227,.13);
+}
+
+.welcome {
+  background: linear-gradient(
+    120deg,
+    rgba(16,155,218,.25),
+    rgba(25,187,227,.10) 55%,
+    #102936
+  );
+  border-color: rgba(82,217,232,.35);
+}
+
+.card {
+  background: linear-gradient(
+    145deg,
+    rgba(22,55,70,.96),
+    rgba(16,41,54,.98)
+  );
+  border-color: var(--border);
+  box-shadow: 0 8px 28px rgba(0,0,0,.16);
+}
+
+.card:hover {
+  border-color: rgba(82,217,232,.45);
+}
+
+.mobile-menu {
+  color: var(--aqua);
+  border-color: var(--border);
+}
+
+button:not(.logout) {
+  transition: .25s ease;
+}
+
+button:not(.logout):hover {
+  box-shadow: 0 0 16px rgba(82,217,232,.18);
+}
+
 </style>
 </head>
 
