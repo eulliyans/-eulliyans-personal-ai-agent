@@ -880,6 +880,22 @@ async function loadSavedClients() {
     status.textContent = "Status: " + client.status;
 
     card.append(name, website, platform, status);
+     const platform = document.createElement("p");
+platform.textContent = "Platform: " + (client.platform || "N/A");
+
+const source = document.createElement("p");
+source.textContent = "Source: " + (client.opportunity_source || "N/A");
+
+const opportunityLink = document.createElement("p");
+opportunityLink.textContent = "Opportunity Link: " + (client.opportunity_link || "N/A");
+
+const description = document.createElement("p");
+description.textContent = "Description: " + (client.opportunity_description || "N/A");
+
+const status = document.createElement("p");
+status.textContent = "Status: " + (client.status || "N/A");
+
+card.append(name, website, platform, source, opportunityLink, description, status);
     container.appendChild(card);
   });
 }
@@ -897,6 +913,11 @@ clientLeadForm.addEventListener("submit", async function(event) {
     business_name: document.getElementById("businessName").value.trim(),
     website_url: document.getElementById("websiteUrl").value.trim() || null,
     platform: document.getElementById("platform").value.trim() || null,
+     opportunity_source: document.getElementById("opportunitySource").value.trim() || null,
+
+opportunity_link: document.getElementById("opportunityLink").value.trim() || null,
+
+opportunity_description: document.getElementById("opportunityDescription").value.trim() || null,
     contact_details: {
       notes: document.getElementById("contactDetails").value.trim()
     },
