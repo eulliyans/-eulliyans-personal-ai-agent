@@ -873,13 +873,6 @@ async function loadSavedClients() {
     const website = document.createElement("p");
     website.textContent = client.website_url || "No website";
 
-    const platform = document.createElement("p");
-    platform.textContent = "Platform: " + (client.platform || "N/A");
-
-    const status = document.createElement("p");
-    status.textContent = "Status: " + client.status;
-
-    card.append(name, website, platform, status);
      const platform = document.createElement("p");
 platform.textContent = "Platform: " + (client.platform || "N/A");
 
