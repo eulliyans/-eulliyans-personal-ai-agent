@@ -388,14 +388,68 @@ button { font: inherit; cursor: pointer; }
     </section>
 
     <!-- CLIENTS -->
-    <section class="page-section" id="clients">
-      <div class="card">
-        <h2>Client Finder</h2>
-        <p class="empty">
-          Potential client discovery and lead management will be connected here.
-        </p>
-      </div>
-    </section>
+<section class="page-section" id="clients">
+  <div class="card">
+    <h2>Client Finder</h2>
+    <p>Discover and organize potential business clients.</p>
+
+    <form id="clientLeadForm">
+
+      <label>Business Name *</label>
+      <input
+        type="text"
+        id="businessName"
+        placeholder="Enter business name"
+        required
+      >
+
+      <label>Website URL</label>
+      <input
+        type="url"
+        id="websiteUrl"
+        placeholder="https://example.com"
+      >
+
+      <label>Platform</label>
+      <input
+        type="text"
+        id="platform"
+        placeholder="Google, Facebook, Instagram..."
+      >
+
+      <label>Contact Details</label>
+      <textarea
+        id="contactDetails"
+        placeholder="Email, phone, contact person..."
+      ></textarea>
+
+      <label>Identified Problem</label>
+      <textarea
+        id="identifiedProblem"
+        placeholder="What problem does this business have?"
+      ></textarea>
+
+      <label>Proposed Solution</label>
+      <textarea
+        id="proposedSolution"
+        placeholder="How can EULLIYAN'S help?"
+      ></textarea>
+
+      <button type="submit" id="saveClientBtn">
+        Save Client
+      </button>
+
+      <p id="clientFormMessage"></p>
+    </form>
+  </div>
+
+  <div class="card">
+    <h2>Saved Clients</h2>
+    <div id="savedClients">
+      <p class="empty">Loading saved clients...</p>
+    </div>
+  </div>
+</section>
 
     <!-- CLIENT WORK -->
     <section class="page-section" id="work">
