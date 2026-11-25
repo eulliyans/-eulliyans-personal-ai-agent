@@ -650,130 +650,27 @@ clientLeadForm.addEventListener("submit", async function(event) {
       notes: document.getElementById("contactDetails").value.trim()
     },
     identified_problem: document.getElementById("identifiedProblem").value.trim() || null,
-    
-const clientLeadForm = document.getElementById("clientLeadForm");
-let editingClientId = null;
-
-async function loadSavedClients() {
-  const container = document.getElementById("savedClients");
-
-  const { data, error } = await supabaseClient
-    .from("client_leads")
-    .select("*")
-    .order("created_at", { ascending: false });
-
-  if (error) {
-    container.textContent = "Could not load clients: " + error.message;
-    return;
-  }
-
-  container.innerHTML = "";
-
-  if (!data || data.length === 0) {
-    container.textContent = "No saved clients yet.";
-    return;
-  }
-
-  data.forEach(client => {
-    const card = document.createElement("div");
-    card.className = "card";
-
-    const name = document.createElement("h3");
-    name.textContent = client.business_name;
-
-    const website = document.createElement("p");
-    website.textContent = client.website_url || "No website";
-
-    const platform = document.createElement("p");
-    platform.textContent = "Platform: " + (client.platform || "N/A");
-
-    const status = document.createElement("p");
-    status.textContent = "Status: " + client.status;
-
-    const editButton = document.createElement("button");
-    editButton.type = "button";
-    editButton.textContent = "Edit Client";
-
-    editButton.addEventListener("click", () => {
-      editingClientId = client.id;
-
-      document.getElementById("businessName").value = client.business_name || "";
-      document.getElementById("websiteUrl").value = client.website_url || "";
-      document.getElementById("platform").value = client.platform || "";
-      document.getElementById("contactDetails").value =
-        client.contact_details?.notes || "";
-      document.getElementById("identifiedProblem").value =
-        client.identified_problem || "";
-      document.getElementById("proposedSolution").value =
-        client.proposed_solution || "";
-
-      document.getElementById("saveClientBtn").textContent = "Update Client";
-      document.getElementById("clientFormMessage").textContent =
-        "Editing: " + client.business_name;
-
-      clientLeadForm.scrollIntoView({ behavior: "smooth" });
-    });
-
-    card.append(name, website, platform, status, editButton);
-    container.appendChild(card);
-  });
-}
-
-clientLeadForm.addEventListener("submit", async function(event) {
-  event.preventDefault();
-
-  const button = document.getElementById("saveClientBtn");
-  const message = document.getElementById("clientFormMessage");
-
-  button.disabled = true;
-  message.textContent = editingClientId
-    ? "Updating client..."
-    : "Saving client...";
-
-  const clientData = {
-    business_name: document.getElementById("businessName").value.trim(),
-    website_url: document.getElementById("websiteUrl").value.trim() || null,
-    platform: document.getElementById("platform").value.trim() || null,
-    contact_details: {
-      notes: document.getElementById("contactDetails").value.trim()
-    },
-    identified_problem: document.getElementById("identifiedProblem").value.trim() || null,
     proposed_solution: document.getElementById("proposedSolution").value.trim() || null
   };
 
-  let result;
-
-  if (editingClientId) {
-    result = await supabaseClient
-      .from("client_leads")
-      .update(clientData)
-      .eq("id", editingClientId);
-  } else {
-    result = await supabaseClient
-      .from("client_leads")
-      .insert([clientData]);
-  }
+  const { error } = await supabaseClient
+    .from("client_leads")
+    .insert([clientData]);
 
   button.disabled = false;
 
-  if (result.error) {
-    message.textContent = "Error: " + result.error.message;
+  if (error) {
+    message.textContent = "Error: " + error.message;
     return;
   }
 
-  message.textContent = editingClientId
-    ? "Client updated successfully!"
-    : "Client saved successfully!";
+  message.textContent = "Client saved successfully!";
 
-  editingClientId = null;
   clientLeadForm.reset();
-  button.textContent = "Save Client";
-
   await loadSavedClients();
 });
 
 loadSavedClients();
-
 </script>
 
 </body>
