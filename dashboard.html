@@ -588,6 +588,89 @@ document.getElementById("logoutButton").addEventListener("click", async () => {
 
 // Start
 verifyOwner();
+  // CLIENT FINDER - SUPABASE
+
+const clientLeadForm = document.getElementById("clientLeadForm");
+
+async function loadSavedClients() {
+  const container = document.getElementById("savedClients");
+
+  const { data, error } = await supabaseClient
+    .from("client_leads")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    container.textContent = "Could not load clients: " + error.message;
+    return;
+  }
+
+  container.innerHTML = "";
+
+  if (!data || data.length === 0) {
+    container.textContent = "No saved clients yet.";
+    return;
+  }
+
+  data.forEach(client => {
+    const card = document.createElement("div");
+    card.className = "card";
+
+    const name = document.createElement("h3");
+    name.textContent = client.business_name;
+
+    const website = document.createElement("p");
+    website.textContent = client.website_url || "No website";
+
+    const platform = document.createElement("p");
+    platform.textContent = "Platform: " + (client.platform || "N/A");
+
+    const status = document.createElement("p");
+    status.textContent = "Status: " + client.status;
+
+    card.append(name, website, platform, status);
+    container.appendChild(card);
+  });
+}
+
+clientLeadForm.addEventListener("submit", async function(event) {
+  event.preventDefault();
+
+  const button = document.getElementById("saveClientBtn");
+  const message = document.getElementById("clientFormMessage");
+
+  button.disabled = true;
+  message.textContent = "Saving client...";
+
+  const clientData = {
+    business_name: document.getElementById("businessName").value.trim(),
+    website_url: document.getElementById("websiteUrl").value.trim() || null,
+    platform: document.getElementById("platform").value.trim() || null,
+    contact_details: {
+      notes: document.getElementById("contactDetails").value.trim()
+    },
+    identified_problem: document.getElementById("identifiedProblem").value.trim() || null,
+    proposed_solution: document.getElementById("proposedSolution").value.trim() || null
+  };
+
+  const { error } = await supabaseClient
+    .from("client_leads")
+    .insert([clientData]);
+
+  button.disabled = false;
+
+  if (error) {
+    message.textContent = "Error: " + error.message;
+    return;
+  }
+
+  message.textContent = "Client saved successfully!";
+
+  clientLeadForm.reset();
+  await loadSavedClients();
+});
+
+loadSavedClients();
 </script>
 
 </body>
