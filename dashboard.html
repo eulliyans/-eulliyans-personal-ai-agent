@@ -839,13 +839,17 @@ async function loadTrash() {
   }
 
   container.innerHTML = "";
+const selectedSource = document.getElementById("sourceFilter").value;
 
-  if (!data || data.length === 0) {
+const filteredData = selectedSource === "all"
+  ? data
+  : data.filter(client => client.opportunity_source === selectedSource);
+  if (!filteredData || filteredData.length === 0) {
     container.textContent = "Trash is empty.";
     return;
   }
 
-  data.forEach(client => {
+  filteredData.forEach(client => {
     const card = document.createElement("div");
     card.className = "card";
 
