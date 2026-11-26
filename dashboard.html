@@ -807,6 +807,8 @@ async function loadOverview() {
   }
 }
 // Load deleted clients
+
+// Load deleted clients
 async function loadTrash() {
   const container = document.getElementById("trashClients");
 
@@ -836,12 +838,76 @@ async function loadTrash() {
     name.textContent = client.business_name;
 
     const deletedDate = document.createElement("p");
-    deletedDate.textContent = "Deleted: " + (client.deleted_at || "Unknown");
+    deletedDate.textContent =
+      "Deleted: " + (client.deleted_at || "Unknown");
 
-    card.append(name, deletedDate);
+    // Restore button
+    const restoreButton = document.createElement("button");
+    restoreButton.type = "button";
+    restoreButton.textContent = "Restore";
+
+    restoreButton.addEventListener("click", async () => {
+      if (!confirm("Restore this client?")) return;
+
+      restoreButton.disabled = true;
+
+      const { error } = await supabaseClient
+        .from("client_leads")
+        .update({
+          is_deleted: false,
+          deleted_at: null
+        })
+        .eq("id", client.id)
+        .eq("is_deleted", true);
+
+      if (error) {
+        alert("Restore failed: " + error.message);
+        restoreButton.disabled = false;
+        return;
+      }
+
+      await loadTrash();
+      await loadSavedClients();
+    });
+
+    // Permanent Delete button
+    const deleteButton = document.createElement("button");
+    deleteButton.type = "button";
+    deleteButton.textContent = "Permanent Delete";
+
+    deleteButton.addEventListener("click", async () => {
+      if (!confirm(
+        "WARNING: Permanently delete this client? This cannot be undone."
+      )) return;
+
+      deleteButton.disabled = true;
+
+      const { error } = await supabaseClient
+        .from("client_leads")
+        .delete()
+        .eq("id", client.id)
+        .eq("is_deleted", true);
+
+      if (error) {
+        alert("Permanent delete failed: " + error.message);
+        deleteButton.disabled = false;
+        return;
+      }
+
+      await loadTrash();
+    });
+
+    card.append(
+      name,
+      deletedDate,
+      restoreButton,
+      deleteButton
+    );
+
     container.appendChild(card);
   });
 }
+
 // Sidebar navigation
 const navButtons = document.querySelectorAll(".nav-button");
 const sections = document.querySelectorAll(".page-section");
