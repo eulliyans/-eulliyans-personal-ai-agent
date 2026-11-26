@@ -781,9 +781,11 @@ async function verifyOwner() {
     return false;
   }
 
-  loadOverview();
+    await loadOverview();
+  await loadSavedClients();
+  await loadTrash();
+
   return true;
-}
 
 // Load overview counts
 async function loadOverview() {
@@ -946,8 +948,6 @@ opportunity_description: document.getElementById("opportunityDescription").value
   clientLeadForm.reset();
   await loadSavedClients();
 });
-
-loadSavedClients();
 </script>
 
 </body>
