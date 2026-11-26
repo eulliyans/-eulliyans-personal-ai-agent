@@ -1063,7 +1063,7 @@ card.append(
     container.appendChild(card);
   });
 }
-
+document.getElementById("sourceFilter").addEventListener("change", loadSavedClients);
 clientLeadForm.addEventListener("submit", async function(event) {
   event.preventDefault();
 
