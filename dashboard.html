@@ -838,29 +838,25 @@ async function loadTrash() {
     return;
   }
 
-  container.innerHTML = "";
-const selectedSource = document.getElementById("sourceFilter").value;
+ container.innerHTML = "";
 
-const filteredData = selectedSource === "all"
-  ? data
-  : data.filter(client => client.opportunity_source === selectedSource);
-  if (!filteredData || filteredData.length === 0) {
-    container.textContent = "Trash is empty.";
-    return;
-  }
+if (!data || data.length === 0) {
+  container.textContent = "Trash is empty.";
+  return;
+}
 
-  filteredData.forEach(client => {
-    const card = document.createElement("div");
-    card.className = "card";
+data.forEach(client => {
+  const card = document.createElement("div");
+  card.className = "card";
 
-    const name = document.createElement("h3");
-    name.textContent = client.business_name;
+  const name = document.createElement("h3");
+  name.textContent = client.business_name;
 
-    const deletedDate = document.createElement("p");
-    deletedDate.textContent =
-      "Deleted: " + (client.deleted_at || "Unknown");
+  const deletedDate = document.createElement("p");
+  deletedDate.textContent =
+    "Deleted: " + (client.deleted_at || "Unknown");
 
-    // Restore button
+  // Restore button
     const restoreButton = document.createElement("button");
     restoreButton.type = "button";
     restoreButton.textContent = "Restore";
