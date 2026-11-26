@@ -994,12 +994,11 @@ const selectedSource = document.getElementById("sourceFilter").value;
 const filteredData = selectedSource === "all"
   ? data
   : data.filter(client => client.opportunity_source === selectedSource);
-  if (!data || data.length === 0) {
-    container.textContent = "No saved clients yet.";
+  if (!filteredData || filteredData.length === 0) {    container.textContent = "No saved clients yet.";
     return;
   }
 
-  data.forEach(client => {
+  filteredData.forEach(client => {
     const card = document.createElement("div");
     card.className = "card";
 
