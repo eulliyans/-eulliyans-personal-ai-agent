@@ -898,8 +898,9 @@ async function loadSavedClients() {
 
   const { data, error } = await supabaseClient
     .from("client_leads")
-    .select("*")
-    .order("created_at", { ascending: false });
+.select("*")
+.eq("is_deleted", false)
+.order("created_at", { ascending: false });
 
   if (error) {
     container.textContent = "Could not load clients: " + error.message;
