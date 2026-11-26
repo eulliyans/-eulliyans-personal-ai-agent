@@ -806,7 +806,42 @@ async function loadOverview() {
       error ? "—" : count;
   }
 }
+// Load deleted clients
+async function loadTrash() {
+  const container = document.getElementById("trashClients");
 
+  const { data, error } = await supabaseClient
+    .from("client_leads")
+    .select("*")
+    .eq("is_deleted", true)
+    .order("deleted_at", { ascending: false });
+
+  if (error) {
+    container.textContent = "Could not load trash: " + error.message;
+    return;
+  }
+
+  container.innerHTML = "";
+
+  if (!data || data.length === 0) {
+    container.textContent = "Trash is empty.";
+    return;
+  }
+
+  data.forEach(client => {
+    const card = document.createElement("div");
+    card.className = "card";
+
+    const name = document.createElement("h3");
+    name.textContent = client.business_name;
+
+    const deletedDate = document.createElement("p");
+    deletedDate.textContent = "Deleted: " + (client.deleted_at || "Unknown");
+
+    card.append(name, deletedDate);
+    container.appendChild(card);
+  });
+}
 // Sidebar navigation
 const navButtons = document.querySelectorAll(".nav-button");
 const sections = document.querySelectorAll(".page-section");
