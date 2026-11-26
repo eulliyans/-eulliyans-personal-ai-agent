@@ -651,11 +651,16 @@ button {
         placeholder="Google, Facebook, Instagram..."
       >
 <label>Opportunity Source</label>
-<input
-  type="text"
+<select
   id="opportunitySource"
-  placeholder="Upwork, Fiverr, LinkedIn..."
+  style="width:100%;background:#091F2B;color:var(--text);border:1px solid rgba(82,217,232,.20);border-radius:10px;padding:13px 14px;min-height:46px;"
 >
+  <option value="">Select Source</option>
+  <option value="Upwork">Upwork</option>
+  <option value="LinkedIn">LinkedIn</option>
+  <option value="Facebook">Facebook</option>
+  <option value="Other">Other</option>
+</select>
 
 <label>Opportunity Link</label>
 <input
