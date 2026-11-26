@@ -939,7 +939,43 @@ description.textContent = "Description: " + (client.opportunity_description || "
 const status = document.createElement("p");
 status.textContent = "Status: " + (client.status || "N/A");
 
-card.append(name, website, platform, source, opportunityLink, description, status);
+const trashButton = document.createElement("button");
+trashButton.type = "button";
+trashButton.textContent = "Move to Trash";
+
+trashButton.addEventListener("click", async () => {
+  if (!confirm("Move this client to Trash?")) return;
+
+  trashButton.disabled = true;
+
+  const { error } = await supabaseClient
+    .from("client_leads")
+    .update({
+      is_deleted: true,
+      deleted_at: new Date().toISOString()
+    })
+    .eq("id", client.id);
+
+  if (error) {
+    alert("Could not move client: " + error.message);
+    trashButton.disabled = false;
+    return;
+  }
+
+  await loadSavedClients();
+  await loadTrash();
+});
+
+card.append(
+  name,
+  website,
+  platform,
+  source,
+  opportunityLink,
+  description,
+  status,
+  trashButton
+);
     container.appendChild(card);
   });
 }
