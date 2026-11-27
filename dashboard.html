@@ -623,7 +623,68 @@ button {
 
     <!-- CLIENTS -->
 <section class="page-section" id="clients">
-  <div class="card">
+ <!-- GOOGLE BUSINESS DISCOVERY -->
+<div class="card" style="margin-bottom:18px;">
+  <h2>🔎 Google Business Discovery</h2>
+  <p>Find local businesses and explore potential clients.</p>
+
+  <form id="businessSearchForm"
+    style="display:flex;flex-direction:column;gap:12px;margin-top:18px;">
+
+    <label style="color:var(--lagoon);">Business Category</label>
+    <input
+      type="text"
+      id="businessCategory"
+      placeholder="Cafe, Restaurant, Salon..."
+      required
+      style="width:100%;background:#091F2B;color:var(--text);
+      border:1px solid var(--border);border-radius:10px;
+      padding:13px;min-height:46px;"
+    >
+
+    <label style="color:var(--lagoon);">City</label>
+    <input
+      type="text"
+      id="businessCity"
+      placeholder="Jeddah, Saudi Arabia"
+      required
+      style="width:100%;background:#091F2B;color:var(--text);
+      border:1px solid var(--border);border-radius:10px;
+      padding:13px;min-height:46px;"
+    >
+
+    <button type="submit"
+      style="width:100%;border:0;border-radius:10px;
+      padding:14px;color:#06202B;font-weight:bold;
+      background:linear-gradient(110deg,var(--indigo),var(--azure),var(--aqua));">
+      Search Businesses on Google Maps
+    </button>
+
+  </form>
+</div>
+
+<script>
+document.getElementById("businessSearchForm")
+  .addEventListener("submit", function(event) {
+
+    event.preventDefault();
+
+    const category =
+      document.getElementById("businessCategory").value.trim();
+
+    const city =
+      document.getElementById("businessCity").value.trim();
+
+    const searchQuery = category + " in " + city;
+
+    const googleMapsUrl =
+      "https://www.google.com/maps/search/?api=1&query=" +
+      encodeURIComponent(searchQuery);
+
+    window.open(googleMapsUrl, "_blank");
+  });
+</script>
+   <div class="card">
     <h2>Client Finder</h2>
     <p>Discover and organize potential business clients.</p>
 
