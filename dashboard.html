@@ -1246,9 +1246,10 @@ async function loadClientTasks() {
     clientSelect.appendChild(option);
   });
 
-  const { data: tasks, error: taskError } = await supabaseClient
+    const { data: tasks, error: taskError } = await supabaseClient
     .from("client_tasks")
     .select("*")
+    .eq("is_deleted", false)
     .order("created_at", { ascending: false });
 
   if (taskError) {
@@ -1333,7 +1334,33 @@ async function loadClientTasks() {
 
       statusSelect.disabled = false;
     });
+const trashButton = document.createElement("button");
+trashButton.type = "button";
+trashButton.textContent = "Move to Trash";
 
+trashButton.addEventListener("click", async () => {
+  if (!confirm("Move this task to Trash?")) return;
+
+  trashButton.disabled = true;
+
+  const { error } = await supabaseClient
+    .from("client_tasks")
+    .update({
+      is_deleted: true,
+      deleted_at: new Date().toISOString()
+    })
+    .eq("id", task.id)
+    .eq("is_deleted", false);
+
+  if (error) {
+    alert("Could not move task to Trash: " + error.message);
+    trashButton.disabled = false;
+    return;
+  }
+
+  await loadClientTasks();
+  await loadTrash();
+});
     card.append(
       title,
       clientName,
@@ -1341,7 +1368,8 @@ async function loadClientTasks() {
       priority,
       deadline,
       statusLabel,
-      statusSelect
+      statusSelect,
+      trashButton
     );
 
     taskList.appendChild(card);
