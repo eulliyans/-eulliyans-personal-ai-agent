@@ -1212,8 +1212,11 @@ opportunity_description: document.getElementById("opportunityDescription").value
 
   message.textContent = "Client saved successfully!";
 
-  clientLeadForm.reset();
-   
+    clientLeadForm.reset();
+
+  await loadSavedClients();
+});
+
 // CLIENT WORK - LOAD CLIENTS AND TASKS
 
 async function loadClientTasks() {
