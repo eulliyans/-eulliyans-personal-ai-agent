@@ -909,7 +909,7 @@ async function verifyOwner() {
     await loadOverview();
   await loadSavedClients();
     await loadTrash();
-
+await loadClientTasks();
   return true;
 }
 
@@ -1384,11 +1384,9 @@ document.getElementById("clientTaskForm")
     document.getElementById("clientTaskForm").reset();
     document.getElementById("taskPriority").value = "medium";
 
-    await loadClientTasks();
+            await loadClientTasks();
   });
 
-  await loadSavedClients();
-});
 </script>
 
 </body>
