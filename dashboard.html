@@ -950,10 +950,9 @@ async function loadTrash() {
 
  container.innerHTML = "";
 
-if (!data || data.length === 0) {
-  container.textContent = "Trash is empty.";
-  return;
-}
+ if (!data || data.length === 0) {
+   container.innerHTML = "";
+ }
 
 data.forEach(client => {
   const card = document.createElement("div");
