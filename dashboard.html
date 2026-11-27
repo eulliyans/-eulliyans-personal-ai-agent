@@ -794,15 +794,60 @@ document.getElementById("businessSearchForm")
   </div>
 </section>
 
-    <!-- CLIENT WORK -->
-    <section class="page-section" id="work">
-      <div class="card">
-        <h2>Client Work</h2>
-        <p class="empty">
-          Client projects, tasks and work progress will appear here.
-        </p>
-      </div>
-    </section>
+    
+<!-- CLIENT WORK -->
+<section class="page-section" id="work">
+
+  <div class="card">
+    <h2>💼 Client Work</h2>
+    <p class="empty">
+      Create tasks, manage client work and track progress.
+    </p>
+
+    <form id="clientTaskForm">
+
+      <label> Select Client *</label>
+      <select id="taskClientId" required
+        style="width:100%;background:#091F2B;color:var(--text);border:1px solid var(--border);border-radius:10px;padding:13px;min-height:46px;">
+        <option value="">Loading clients...</option>
+      </select>
+
+      <label>Task Title *</label>
+      <input type="text" id="taskTitle"
+        placeholder="e.g. Fix website mobile layout" required>
+
+      <label>Description</label>
+      <textarea id="taskDescription"
+        placeholder="Describe what needs to be done..."></textarea>
+
+      <label>Priority</label>
+      <select id="taskPriority"
+        style="width:100%;background:#091F2B;color:var(--text);border:1px solid var(--border);border-radius:10px;padding:13px;min-height:46px;">
+        <option value="low">Low</option>
+        <option value="medium" selected>Medium</option>
+        <option value="high">High</option>
+      </select>
+
+      <label>Deadline</label>
+      <input type="date" id="taskDueDate">
+
+      <button type="submit" id="saveTaskBtn">
+        Save Task
+      </button>
+
+      <p id="taskFormMessage"></p>
+    </form>
+  </div>
+
+  <div class="card">
+    <h2>My Tasks</h2>
+    <div id="clientTaskList">
+      <p class="empty">Loading tasks...</p>
+    </div>
+  </div>
+
+</section>
+
 
     <!-- PERSONAL PROJECTS -->
     <section class="page-section" id="projects">
@@ -1168,6 +1213,180 @@ opportunity_description: document.getElementById("opportunityDescription").value
   message.textContent = "Client saved successfully!";
 
   clientLeadForm.reset();
+   
+// CLIENT WORK - LOAD CLIENTS AND TASKS
+
+async function loadClientTasks() {
+  const clientSelect = document.getElementById("taskClientId");
+  const taskList = document.getElementById("clientTaskList");
+
+  const { data: clients, error: clientError } = await supabaseClient
+    .from("client_leads")
+    .select("id, business_name, is_deleted");
+
+  if (clientError) {
+    clientSelect.innerHTML = '<option value="">Could not load clients</option>';
+    taskList.textContent = "Could not load clients: " + clientError.message;
+    return;
+  }
+
+  const activeClients = (clients || []).filter(
+    client => !client.is_deleted
+  );
+
+  clientSelect.innerHTML = '<option value="">Select a client</option>';
+
+  activeClients.forEach(client => {
+    const option = document.createElement("option");
+    option.value = client.id;
+    option.textContent = client.business_name;
+    clientSelect.appendChild(option);
+  });
+
+  const { data: tasks, error: taskError } = await supabaseClient
+    .from("client_tasks")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (taskError) {
+    taskList.textContent = "Could not load tasks: " + taskError.message;
+    return;
+  }
+
+  taskList.innerHTML = "";
+
+  if (!tasks || tasks.length === 0) {
+    taskList.textContent = "No tasks created yet.";
+    return;
+  }
+
+  tasks.forEach(task => {
+    const card = document.createElement("div");
+    card.className = "card";
+    card.style.marginTop = "12px";
+
+    const title = document.createElement("h3");
+    title.textContent = task.task_title;
+    title.style.color = "var(--lagoon)";
+
+    const client = (clients || []).find(
+      item => item.id === task.client_id
+    );
+
+    const clientName = document.createElement("p");
+    clientName.textContent = "Client: " +
+      (client ? client.business_name : "Client unavailable");
+
+    const description = document.createElement("p");
+    description.textContent = task.description || "No description";
+
+    const priority = document.createElement("p");
+    priority.textContent = "Priority: " + task.priority;
+
+    const deadline = document.createElement("p");
+    deadline.textContent = "Deadline: " + (task.due_date || "Not set");
+
+    const statusLabel = document.createElement("label");
+    statusLabel.textContent = "Task Status";
+
+    const statusSelect = document.createElement("select");
+    statusSelect.style.width = "100%";
+    statusSelect.style.background = "#091F2B";
+    statusSelect.style.color = "var(--text)";
+    statusSelect.style.border = "1px solid var(--border)";
+    statusSelect.style.borderRadius = "10px";
+    statusSelect.style.padding = "12px";
+
+    [
+      ["pending", "Pending"],
+      ["in_progress", "In Progress"],
+      ["completed", "Completed"]
+    ].forEach(([value, label]) => {
+      const option = document.createElement("option");
+      option.value = value;
+      option.textContent = label;
+      statusSelect.appendChild(option);
+    });
+
+    statusSelect.value = task.status;
+
+    statusSelect.addEventListener("change", async () => {
+      statusSelect.disabled = true;
+
+      const { error } = await supabaseClient
+        .from("client_tasks")
+        .update({
+          status: statusSelect.value,
+          updated_at: new Date().toISOString()
+        })
+        .eq("id", task.id);
+
+      if (error) {
+        alert("Could not update task: " + error.message);
+        statusSelect.value = task.status;
+      } else {
+        task.status = statusSelect.value;
+      }
+
+      statusSelect.disabled = false;
+    });
+
+    card.append(
+      title,
+      clientName,
+      description,
+      priority,
+      deadline,
+      statusLabel,
+      statusSelect
+    );
+
+    taskList.appendChild(card);
+  });
+}
+
+
+// SAVE NEW CLIENT TASK
+
+document.getElementById("clientTaskForm")
+  .addEventListener("submit", async function(event) {
+
+    event.preventDefault();
+
+    const button = document.getElementById("saveTaskBtn");
+    const message = document.getElementById("taskFormMessage");
+
+    button.disabled = true;
+    message.textContent = "Saving task...";
+
+    const taskData = {
+      client_id: document.getElementById("taskClientId").value,
+      task_title: document.getElementById("taskTitle").value.trim(),
+      description:
+        document.getElementById("taskDescription").value.trim() || null,
+      priority: document.getElementById("taskPriority").value,
+      due_date: document.getElementById("taskDueDate").value || null
+    };
+
+    const { error } = await supabaseClient
+      .from("client_tasks")
+      .insert([taskData]);
+
+    button.disabled = false;
+
+    if (error) {
+      message.textContent = "Error: " + error.message;
+      return;
+    }
+
+    message.textContent = "Task saved successfully!";
+
+    document.getElementById("clientTaskForm").reset();
+    document.getElementById("taskPriority").value = "medium";
+
+    await loadClientTasks();
+  });
+
   await loadSavedClients();
 });
 </script>
