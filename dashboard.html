@@ -1030,6 +1030,94 @@ data.forEach(client => {
 
     container.appendChild(card);
   });
+   // Load deleted tasks in the same Trash
+const { data: deletedTasks, error: taskTrashError } = await supabaseClient
+  .from("client_tasks")
+  .select("*")
+  .eq("is_deleted", true)
+  .order("deleted_at", { ascending: false });
+
+if (taskTrashError) {
+  const errorMessage = document.createElement("p");
+  errorMessage.textContent = "Could not load deleted tasks: " + taskTrashError.message;
+  container.appendChild(errorMessage);
+  return;
+}
+
+const { data: allClients } = await supabaseClient
+  .from("client_leads")
+  .select("id, business_name");
+
+(deletedTasks || []).forEach(task => {
+  const card = document.createElement("div");
+  card.className = "card";
+
+  const type = document.createElement("p");
+  type.textContent = "TASK";
+
+  const title = document.createElement("h3");
+  title.textContent = task.task_title;
+
+  const client = (allClients || []).find(
+    item => item.id === task.client_id
+  );
+
+  const clientName = document.createElement("p");
+  clientName.textContent = "Client: " +
+    (client ? client.business_name : "Client unavailable");
+
+  const deletedDate = document.createElement("p");
+  deletedDate.textContent = "Deleted: " + (task.deleted_at || "Unknown");
+
+  const restoreButton = document.createElement("button");
+  restoreButton.type = "button";
+  restoreButton.textContent = "Restore";
+
+  restoreButton.addEventListener("click", async () => {
+    if (!confirm("Restore this task?")) return;
+
+    const { error } = await supabaseClient
+      .from("client_tasks")
+      .update({
+        is_deleted: false,
+        deleted_at: null
+      })
+      .eq("id", task.id)
+      .eq("is_deleted", true);
+
+    if (error) {
+      alert("Task restore failed: " + error.message);
+      return;
+    }
+
+    await loadTrash();
+    await loadClientTasks();
+  });
+
+  const deleteButton = document.createElement("button");
+  deleteButton.type = "button";
+  deleteButton.textContent = "Permanent Delete";
+
+  deleteButton.addEventListener("click", async () => {
+    if (!confirm("Permanently delete this task? This cannot be undone.")) return;
+
+    const { error } = await supabaseClient
+      .from("client_tasks")
+      .delete()
+      .eq("id", task.id)
+      .eq("is_deleted", true);
+
+    if (error) {
+      alert("Task delete failed: " + error.message);
+      return;
+    }
+
+    await loadTrash();
+  });
+
+  card.append(type, title, clientName, deletedDate, restoreButton, deleteButton);
+  container.appendChild(card);
+});
 }
 
 // Sidebar navigation
