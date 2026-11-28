@@ -970,7 +970,22 @@ document.getElementById("businessSearchForm")
 
 </section>
 
+<!-- OWNER APPROVAL QUEUE -->
+<section class="page-section" id="approvals">
 
+  <div class="card">
+    <h2>🔐 Owner Approval Queue</h2>
+
+    <p class="empty">
+      Review and manage actions that require your approval.
+    </p>
+
+    <div id="approvalRequestList">
+      <p class="empty">Loading approval requests...</p>
+    </div>
+  </div>
+
+</section>
     <!-- PERSONAL PROJECTS -->
     <section class="page-section" id="projects">
       <div class="card">
@@ -1101,10 +1116,10 @@ async function verifyOwner() {
     return false;
   }
 
-    await loadOverview();
-  await loadSavedClients();
-    await loadTrash();
+await loadOverview();
+await loadTrash();
 await loadClientTasks();
+await loadApprovalRequests();
   return true;
 }
 
@@ -1125,6 +1140,48 @@ async function loadOverview() {
     document.getElementById(elementId).textContent =
       error ? "—" : count;
   }
+}
+   // Load Owner Approval Requests
+async function loadApprovalRequests() {
+  const container = document.getElementById("approvalRequestList");
+
+  const { data, error } = await supabaseClient
+    .from("approval_requests")
+    .select("*")
+    .eq("status", "pending")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    container.textContent = "Could not load requests: " + error.message;
+    return;
+  }
+
+  container.innerHTML = "";
+
+  if (!data || data.length === 0) {
+    container.textContent = "No pending approval requests.";
+    return;
+  }
+
+  data.forEach(request => {
+    const card = document.createElement("div");
+    card.className = "card";
+
+    const title = document.createElement("h3");
+    title.textContent = request.requested_action;
+
+    const description = document.createElement("p");
+    description.textContent = request.description;
+
+    const mode = document.createElement("p");
+    mode.textContent = "Mode: " + request.mode;
+
+    const date = document.createElement("small");
+    date.textContent = new Date(request.created_at).toLocaleString();
+
+    card.append(title, description, mode, date);
+    container.appendChild(card);
+  });
 }
 // Load deleted clients
 
