@@ -609,23 +609,94 @@ button {
     </section>
 
     
+
 <!-- AI AGENT -->
 <section class="page-section" id="agent">
+
   <div class="card">
     <div class="feature-icon">🐇</div>
     <h2>Personal AI Agent</h2>
     <p class="empty">
       Your Personal Business Agent will help you learn, organize work and grow EULLIYAN'S.
     </p>
-    <span class="status">● Foundation planning — AI connection not enabled</span>
+    <span class="status">● Chat Interface Ready — AI connection pending</span>
   </div>
 
+  <!-- AI CHAT INTERFACE -->
+  <h2 class="section-title">AI Assistant Chat</h2>
+
+  <div class="card" style="padding:0;overflow:hidden;">
+
+    <div style="padding:18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;">
+      <div style="font-size:30px;">🐇</div>
+      <div>
+        <h3 style="margin:0;">EULLIYAN AI Assistant</h3>
+        <span class="status">● AI Brain not connected yet</span>
+      </div>
+    </div>
+
+    <div style="padding:20px;min-height:220px;">
+      <div style="background:var(--panel2);padding:15px;border-radius:12px;max-width:90%;">
+        <strong>Hello! 👋</strong>
+        <p style="color:var(--muted);line-height:1.7;margin-bottom:0;">
+          I am your Personal Business Assistant.
+          I will help you with business tasks, finding clients,
+          learning and organizing your work.
+          I will explain everything step by step in simple language.
+        </p>
+      </div>
+
+      <p class="empty" style="font-size:12px;">
+        Chat will become active after the AI connection is completed.
+      </p>
+    </div>
+
+    <div style="padding:15px;border-top:1px solid var(--border);">
+
+      <textarea
+        placeholder="AI connection pending..."
+        disabled
+        style="width:100%;min-height:65px;background:#091F2B;color:var(--text);border:1px solid var(--border);border-radius:10px;padding:13px;resize:vertical;"
+      ></textarea>
+
+      <div style="display:flex;gap:10px;margin-top:12px;">
+
+        <button
+          type="button"
+          disabled
+          style="flex:1;padding:13px;border:0;border-radius:10px;background:var(--panel2);color:var(--muted);opacity:.6;"
+        >
+          ➤ Send
+        </button>
+
+        <button
+          type="button"
+          disabled
+          title="Voice feature will be added later"
+          style="padding:13px 18px;border:1px solid var(--border);border-radius:10px;background:var(--panel2);color:var(--aqua);opacity:.7;"
+        >
+          🎙 Voice
+        </button>
+
+      </div>
+
+      <p style="font-size:11px;color:var(--muted);margin-bottom:0;">
+        Voice input and voice identity verification will be configured in a later step.
+      </p>
+
+    </div>
+  </div>
+
+  <!-- EXISTING OPERATING RULES -->
   <h2 class="section-title">Agent Operating Rules</h2>
+
   <p class="empty">
-    These are the agreed permission rules for the Agent. Actual AI conversation and task execution will be connected in later development steps.
+    These are the agreed permission rules for the Agent.
+    Actual AI conversation and task execution will be connected in later development steps.
   </p>
 
   <div class="grid-two">
+
     <div class="card feature">
       <div class="feature-icon">📘</div>
       <h3>Teach Me Mode</h3>
@@ -665,8 +736,10 @@ button {
       </p>
       <span class="status">● Recommendation rule defined</span>
     </div>
+
   </div>
 </section>
+
 
 
     <!-- CLIENTS -->
