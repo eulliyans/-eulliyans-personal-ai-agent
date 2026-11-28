@@ -1012,6 +1012,50 @@ const SUPABASE_URL = "https://byajjrvolofvgewpwswk.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_2FjcIO6DkXPNInB6KUngVg_4_cAx4Z2";
 const OWNER_ID = "da203003-ec49-4675-8c6a-740f5fd3b6c5";
 
+// EULLIYAN AI - CENTRAL PERMISSION POLICY
+
+const AGENT_PERMISSION_POLICY = {
+  auto: [
+    "organize_client_info",
+    "create_internal_task_draft",
+    "update_routine_task_status"
+  ],
+
+  suggest: [
+    "research_business",
+    "analyze_website",
+    "draft_client_message",
+    "prepare_proposal"
+  ],
+
+  approval: [
+    "send_message",
+    "publish_content",
+    "accept_contract",
+    "make_payment",
+    "spend_money",
+    "commit_to_client"
+  ]
+};
+
+// Check permission before an agent action
+function getAgentPermission(action) {
+  if (AGENT_PERMISSION_POLICY.auto.includes(action)) {
+    return "auto";
+  }
+
+  if (AGENT_PERMISSION_POLICY.suggest.includes(action)) {
+    return "suggest";
+  }
+
+  // Unknown or sensitive actions require owner approval
+  if (AGENT_PERMISSION_POLICY.approval.includes(action)) {
+    return "approval_required";
+  }
+
+  return "approval_required";
+}
+
 const supabaseClient = window.supabase.createClient(
   SUPABASE_URL,
   SUPABASE_ANON_KEY
